@@ -17,6 +17,10 @@ int main (void){
 	bitToggle('b', 1);
 	bitToggle('a', 2);
 	showReg('d');
+	putchar('\n');
+	bitGet('a', 2);
+	bitGet('d', 12);
+
 
 
 	return 0;

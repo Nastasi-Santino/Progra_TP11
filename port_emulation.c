@@ -62,9 +62,13 @@ static int8_t * portSelector(char p, uint8_t * b){
 				break;
 			case 'd':
 			case 'D':
-				port = &(ports.ab.b);
 				if(b != NULL){
-					*b -= 8;
+					if(*b > 7){
+						port = &ports.ab.a;
+						*b -= 8;
+					} else {
+						port = &ports.ab.b;
+					}
 				}
 				break;
 		}
@@ -121,3 +125,29 @@ void bitToggle(char p, uint8_t bit){
 
 	*port = *port ^ mascara;
 }
+
+void bitGet(char p, uint8_t bit){
+
+	int8_t * port;
+	int8_t on_off;
+
+	port = portSelector(p, &bit);
+
+	uint8_t mascara = 1;
+	int i;
+
+	for(i = 0; i < bit;i++){
+		mascara <<= 1;
+	}
+
+	on_off = *port & mascara;
+
+	printf("%d\n", on_off ? 1 : 0);
+}
+
+
+
+
+
+
+
