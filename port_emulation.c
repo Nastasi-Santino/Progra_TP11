@@ -5,18 +5,6 @@
  *      Author: Grupo 4
  */
 #include "port_emulation.h"
-/*
-typedef struct {
-	uint8_t b0 :1;
-	uint8_t b1 :1;
-	uint8_t b2 :1;
-	uint8_t b3 :1;
-	uint8_t b4 :1;
-	uint8_t b5 :1;
-	uint8_t b6 :1;
-	uint8_t b7 :1;
-}registro_bits_t;
-*/
 
 typedef struct {
 	int8_t a;
@@ -116,4 +104,20 @@ void bitClr(char p, uint8_t bit){
 	mascara = ~mascara;
 
 	*port = *port & mascara;
+}
+
+void bitToggle(char p, uint8_t bit){
+
+	int8_t * port;
+
+	port = portSelector(p, &bit);
+
+	uint8_t mascara = 1;
+	int i;
+
+	for(i = 0; i < bit;i++){
+		mascara <<= 1;
+	}
+
+	*port = *port ^ mascara;
 }

@@ -13,6 +13,10 @@ int main (void){
 	bitSet('a', 2);
 	bitSet('a', 0);
 	showReg('d');
+	putchar('\n');
+	bitToggle('b', 1);
+	bitToggle('a', 2);
+	showReg('d');
 
 
 	return 0;

@@ -14,6 +14,7 @@
 
 void bitSet(char, uint8_t);
 void bitClr(char, uint8_t);
+void bitToggle(char, uint8_t);
 void showReg(char);
 
 #endif /* PORT_EMULATION_H_ */
