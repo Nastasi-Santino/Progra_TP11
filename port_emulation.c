@@ -4,7 +4,6 @@
  *  Created on: Oct 25, 2023
  *      Author: Grupo 4
  */
-#include <stdint.h>
 #include "port_emulation.h"
 /*
 typedef struct {
@@ -45,7 +44,8 @@ void showReg(char p){
 	int i;
 
 	if(p == 'd' || p == 'D'){
-
+		showReg('a');
+		showReg('b');
 	} else {
 		temp = *reg;
 		for(i = 0; i < 8; i++){
@@ -55,7 +55,6 @@ void showReg(char p){
 		for(i = 7; i >= 0; i--){
 			printf("%d", bits[i]);
 		}
-		putchar('\n');
 	}
 
 }
@@ -76,7 +75,9 @@ static int8_t * portSelector(char p, uint8_t * b){
 			case 'd':
 			case 'D':
 				port = &(ports.ab.b);
-				*b -= 8;
+				if(b != NULL){
+					*b -= 8;
+				}
 				break;
 		}
 
@@ -89,14 +90,14 @@ void bitSet(char p, uint8_t bit){
 
 	port = portSelector(p, &bit);
 
-	uint8_t mascara = 0x0000001b;
+	uint8_t mascara = 1;
 	int i;
 
 	for(i = 0; i < bit;i++){
 		mascara <<= 1;
 	}
 
-	 *port = *port || mascara;
+	 *port = *port | mascara;
 }
 
 void bitClr(char p, uint8_t bit){
@@ -105,7 +106,7 @@ void bitClr(char p, uint8_t bit){
 
 	port = portSelector(p, &bit);
 
-	uint8_t mascara = 0x0000001b;
+	uint8_t mascara = 1;
 	int i;
 
 	for(i = 0; i < bit;i++){
@@ -114,5 +115,5 @@ void bitClr(char p, uint8_t bit){
 
 	mascara = ~mascara;
 
-	*port = *port || mascara;
+	*port = *port & mascara;
 }
