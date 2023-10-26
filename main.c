@@ -9,18 +9,10 @@
 
 int main (void){
 
-	bitSet('a', 4);
-	bitSet('a', 2);
-	bitSet('a', 0);
 	showReg('d');
 	putchar('\n');
-	bitToggle('b', 1);
-	bitToggle('a', 2);
+	maskOn('d', 255);
 	showReg('d');
-	putchar('\n');
-	bitGet('a', 2);
-	bitGet('d', 18);
-
 
 
 	return 0;

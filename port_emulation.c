@@ -6,25 +6,29 @@
  */
 #include "port_emulation.h"
 
-#define REGISTRO_EXISTENTE(x) ((x) == 'a' || (x) == 'A' || (x) == 'b' || (x) == 'B' || (x) == 'd' || (x) == 'D')
+
+#define REGISTRO_8BITS(x) ((x) == 'a' || (x) == 'A' || (x) == 'b' || (x) == 'B')
+#define REGISTRO_16BITS(x) ((x) == 'd' || (x) == 'D')
+#define REGISTRO_EXISTENTE(x) ((REGISTRO_8BITS(x)) || ((REGISTRO_16BITS(x))))
 #define ERROR 1
 #define OK 0
 
 typedef struct {
-	int8_t a;
-	int8_t b;
+	uint8_t a;
+	uint8_t b;
 }registro_t;
 
 typedef union {
 	registro_t ab;
-	int16_t d;
+	uint16_t d;
 }registroD_t;
 
 static registroD_t ports;
 
-static int8_t * portSelector(char, uint8_t *);
-static int8_t bitSelectorMask(uint_t);
+static uint8_t * portSelector(char, uint8_t *);
+static uint8_t bitSelectorMask(uint8_t);
 static int validar(char, uint8_t);
+static int validarMascara(char, uint16_t);
 
 static int validar(char p, uint8_t bit){
 
@@ -39,9 +43,19 @@ static int validar(char p, uint8_t bit){
 	}
 }
 
-static int8_t * portSelector(char p, uint8_t * b){
+static int validarMascara(char p, uint16_t mask){
 
-	int8_t * port;
+	if(REGISTRO_8BITS(p) && (mask > 255)){
+		return ERROR;
+	} else {
+		return OK;
+	}
+
+}
+
+static uint8_t * portSelector(char p, uint8_t * b){
+
+	uint8_t * port;
 
 		switch(p){
 			case 'a':
@@ -68,7 +82,7 @@ static int8_t * portSelector(char p, uint8_t * b){
 		return port;
 }
 
-static int8_t bitSelectorMask(int8_t bit){
+static uint8_t bitSelectorMask(uint8_t bit){
 
 	uint8_t mask = 1;
 
@@ -85,14 +99,14 @@ int showReg(char p){
 		return ERROR;
 	}
 
-	int8_t * reg = portSelector(p, NULL);
+	uint8_t * reg = portSelector(p, NULL);
 
-	int8_t temp;
+	uint8_t temp;
 
-	int8_t bits[8];
+	uint8_t bits[8];
 	int i;
 
-	if(p == 'd' || p == 'D'){
+	if(REGISTRO_16BITS(p)){
 		showReg('a');
 		showReg('b');
 	} else {
@@ -114,7 +128,7 @@ int bitSet(char p, uint8_t bit){
 		return ERROR;
 	}
 
-	int8_t * port = portSelector(p, &bit);
+	uint8_t * port = portSelector(p, &bit);
 
 	uint8_t mascara = bitSelectorMask(bit);
 	 *port = *port | mascara;
@@ -128,7 +142,7 @@ int bitClr(char p, uint8_t bit){
 		return ERROR;
 	}
 
-	int8_t * port = portSelector(p, &bit);
+	uint8_t * port = portSelector(p, &bit);
 
 	uint8_t mascara = ~bitSelectorMask(bit);
 
@@ -143,7 +157,7 @@ int bitToggle(char p, uint8_t bit){
 		return ERROR;
 	}
 
-	int8_t * port = portSelector(p, &bit);
+	uint8_t * port = portSelector(p, &bit);
 
 	uint8_t mascara = bitSelectorMask(bit);
 
@@ -158,16 +172,40 @@ int bitGet(char p, uint8_t bit){
 		return ERROR;
 	}
 
-	int8_t * port;
+	uint8_t * port = portSelector(p, &bit);
 	int8_t on_off;
-
-	port = portSelector(p, &bit);
 
 	uint8_t mascara = bitSelectorMask(bit);
 
 	on_off = *port & mascara;
 
 	printf("%d\n", on_off ? 1 : 0);
+
+	return OK;
+}
+
+int maskOn(char p, uint16_t mask){
+
+	if(validar(p, 0)){
+		return ERROR;
+	}
+
+	if(validarMascara(p, mask)){
+		return ERROR;
+	}
+
+	uint8_t * port = portSelector(p, NULL);
+
+	if(REGISTRO_16BITS(p)){
+		if(mask <= 255){
+			maskOn('b', mask);
+		} else {
+			maskOn('a', mask%255);
+			maskOn('b', mask - 256);
+		}
+	} else {
+		*port = *port | mask;
+	}
 
 	return OK;
 }
