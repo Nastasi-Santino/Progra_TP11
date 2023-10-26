@@ -12,10 +12,10 @@
 #include <stdint.h>
 #include <stdio.h>
 
-void bitSet(char, uint8_t);
-void bitClr(char, uint8_t);
-void bitToggle(char, uint8_t);
-void bitGet(char, uint8_t);
-void showReg(char);
+int bitSet(char, uint8_t);
+int bitClr(char, uint8_t);
+int bitToggle(char, uint8_t);
+int bitGet(char, uint8_t);
+int showReg(char);
 
 #endif /* PORT_EMULATION_H_ */
