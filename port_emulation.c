@@ -23,6 +23,7 @@ typedef union {
 static registroD_t ports;
 
 static int8_t * portSelector(char, uint8_t *);
+static int8_t bitSelectorMask(uint_t);
 static int validar(char, uint8_t);
 
 static int validar(char p, uint8_t bit){
@@ -67,15 +68,24 @@ static int8_t * portSelector(char p, uint8_t * b){
 		return port;
 }
 
+static int8_t bitSelectorMask(int8_t bit){
+
+	uint8_t mask = 1;
+
+	int i;
+	for(i = 0; i < bit;i++){
+		mask <<= 1;
+	}
+	return mask;
+}
+
 int showReg(char p){
 
 	if(validar(p, 0)){
 		return ERROR;
 	}
 
-	int8_t * reg;
-
-	reg = portSelector(p, NULL);
+	int8_t * reg = portSelector(p, NULL);
 
 	int8_t temp;
 
@@ -104,17 +114,9 @@ int bitSet(char p, uint8_t bit){
 		return ERROR;
 	}
 
-	int8_t * port;
+	int8_t * port = portSelector(p, &bit);
 
-	port = portSelector(p, &bit);
-
-	uint8_t mascara = 1;
-	int i;
-
-	for(i = 0; i < bit;i++){
-		mascara <<= 1;
-	}
-
+	uint8_t mascara = bitSelectorMask(bit);
 	 *port = *port | mascara;
 
 	 return OK;
@@ -126,18 +128,9 @@ int bitClr(char p, uint8_t bit){
 		return ERROR;
 	}
 
-	int8_t * port;
+	int8_t * port = portSelector(p, &bit);
 
-	port = portSelector(p, &bit);
-
-	uint8_t mascara = 1;
-	int i;
-
-	for(i = 0; i < bit;i++){
-		mascara <<= 1;
-	}
-
-	mascara = ~mascara;
+	uint8_t mascara = ~bitSelectorMask(bit);
 
 	*port = *port & mascara;
 
@@ -150,16 +143,9 @@ int bitToggle(char p, uint8_t bit){
 		return ERROR;
 	}
 
-	int8_t * port;
+	int8_t * port = portSelector(p, &bit);
 
-	port = portSelector(p, &bit);
-
-	uint8_t mascara = 1;
-	int i;
-
-	for(i = 0; i < bit;i++){
-		mascara <<= 1;
-	}
+	uint8_t mascara = bitSelectorMask(bit);
 
 	*port = *port ^ mascara;
 
@@ -177,12 +163,7 @@ int bitGet(char p, uint8_t bit){
 
 	port = portSelector(p, &bit);
 
-	uint8_t mascara = 1;
-	int i;
-
-	for(i = 0; i < bit;i++){
-		mascara <<= 1;
-	}
+	uint8_t mascara = bitSelectorMask(bit);
 
 	on_off = *port & mascara;
 

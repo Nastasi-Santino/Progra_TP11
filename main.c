@@ -19,7 +19,7 @@ int main (void){
 	showReg('d');
 	putchar('\n');
 	bitGet('a', 2);
-	bitGet('d', 12);
+	bitGet('d', 18);
 
 
 
