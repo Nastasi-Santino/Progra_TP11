@@ -1,9 +1,3 @@
-/*
- * port_emulation.c
- *
- *  Created on: Oct 25, 2023
- *      Author: Grupo 4
- */
 #include "port_emulation.h"
 
 

@@ -1,10 +1,3 @@
-/*
- * port_emulation.h
- *
- *  Created on: Oct 26, 2023
- *      Author: santino_nastasi
- */
-
 #ifndef PORT_EMULATION_H_
 #define PORT_EMULATION_H_
 
