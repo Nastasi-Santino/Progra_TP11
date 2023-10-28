@@ -1,6 +1,5 @@
 #include "port_emulation.h"
 
-
 #define REGISTRO_8BITS(x) ((x) == 'a' || (x) == 'A' || (x) == 'b' || (x) == 'B')
 #define REGISTRO_16BITS(x) ((x) == 'd' || (x) == 'D')
 #define REGISTRO_EXISTENTE(x) ((REGISTRO_8BITS(x)) || ((REGISTRO_16BITS(x))))
@@ -71,6 +70,8 @@ static uint8_t * portSelector(char p, uint8_t * b){
 					}
 				}
 				break;
+			default:
+				return NULL;
 		}
 
 		return port;
@@ -78,7 +79,7 @@ static uint8_t * portSelector(char p, uint8_t * b){
 
 static uint8_t bitSelectorMask(uint8_t bit){
 
-	uint8_t mask = 1;
+	uint8_t mask = 0b00000001;
 
 	int i;
 	for(i = 0; i < bit;i++){
