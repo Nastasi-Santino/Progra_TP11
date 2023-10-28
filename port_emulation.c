@@ -8,8 +8,8 @@
 #define OK 0
 
 typedef struct {
-	uint8_t a;
 	uint8_t b;
+	uint8_t a;
 }registro_t;
 
 typedef union {
@@ -140,7 +140,7 @@ int bitClr(char p, uint8_t bit){
 
 	uint8_t mascara = ~bitSelectorMask(bit);
 
-	*port = *port & mascara;
+	*port &= mascara;
 
 	return OK;
 }
@@ -155,7 +155,7 @@ int bitToggle(char p, uint8_t bit){
 
 	uint8_t mascara = bitSelectorMask(bit);
 
-	*port = *port ^ mascara;
+	*port ^= mascara;
 
 	return 0;
 }
@@ -171,7 +171,7 @@ int bitGet(char p, uint8_t bit){
 
 	uint8_t mascara = bitSelectorMask(bit);
 
-	on_off = *port & mascara;
+	on_off = port && mascara;
 
 	printf("%d\n", on_off ? 1 : 0);
 
@@ -188,23 +188,61 @@ int maskOn(char p, uint16_t mask){
 		return ERROR;
 	}
 
-	uint8_t * port = portSelector(p, NULL);
-
 	if(REGISTRO_16BITS(p)){
-		if(mask <= 255){
-			maskOn('b', mask);
-		} else {
-			maskOn('a', mask%255);
-			maskOn('b', mask - 256);
-		}
+		uint16_t * port = &ports.d;
+		*port |= mask;
+
 	} else {
-		*port = *port | mask;
+		uint8_t * port = portSelector(p, NULL);
+		*port |= mask;
 	}
 
 	return OK;
 }
 
+int maskOff(char p, uint16_t mask){
 
+	if(validar(p, 0)){
+		return ERROR;
+	}
+
+	if(validarMascara(p, mask)){
+		return ERROR;
+	}
+
+	if(REGISTRO_16BITS(p)){
+		uint16_t * port = &ports.d;
+		*port &= ~mask;
+
+	} else {
+		uint8_t * port = portSelector(p, NULL);
+		*port &= ~mask;
+	}
+
+	return OK;
+}
+
+int maskToggle(char p, uint16_t mask){
+
+	if(validar(p, 0)){
+		return ERROR;
+	}
+
+	if(validarMascara(p, mask)){
+		return ERROR;
+	}
+
+	if(REGISTRO_16BITS(p)){
+		uint16_t * port = &ports.d;
+		*port ^= mask;
+
+	} else {
+		uint8_t * port = portSelector(p, NULL);
+		*port ^= mask;
+	}
+
+	return OK;
+}
 
 
 
